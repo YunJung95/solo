@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+     
+  <configuration>      
+  	<typeAliases>
+  		<typeAlias alias="bv" type="com.tp.soripick.domain.BoardVo"/>
+  		<typeAlias alias="cav" type="com.tp.soripick.domain.CategoryVo"/>
+  		<typeAlias alias="cv" type="com.tp.soripick.domain.ContentVo"/>
+  		<typeAlias alias="cri" type="com.tp.soripick.domain.Criteria"/>
+  		<typeAlias alias="mv" type="com.tp.soripick.domain.MemberVo"/>
+  		<typeAlias alias="ov" type="com.tp.soripick.domain.OrderVo"/>
+  		<typeAlias alias="pv" type="com.tp.soripick.domain.PayVo"/>
+  		<typeAlias alias="rv" type="com.tp.soripick.domain.ReplyVo"/>
+  		<typeAlias alias="scri" type="com.tp.soripick.domain.SearchCriteria"/>
+  		<typeAlias alias="mmi" type="com.tp.soripick.domain.MypageMusicInf"/>
+  		<typeAlias alias="ado" type="com.tp.soripick.domain.AdminOrder"/>
+  		<typeAlias alias="mo" type="com.tp.soripick.domain.MyOrder"/>
+ 		<typeAlias alias="mbo" type="com.tp.soripick.domain.MemBoardVo"/>
+  	</typeAliases>
+
+ </configuration>

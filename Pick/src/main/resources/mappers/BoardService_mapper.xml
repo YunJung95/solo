@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.soripick.persistence.BoardService_Mapper">
+
+<!-- 고객센터 메인 페이지 공지사항 list 출력 -->
+<select id="boardMainNList" parameterType="bv" resultType="bv">
+select * from (select Btitle, Bdate, Bhit from TP_BOARD 
+WHERE Bcategory = 2  and DEL_YN = 'N' order by Bdate DESC) 
+<![CDATA[ where rownum <= 5]]>
+</select> <!-- mysql에서는 LIMIT 5; -->
+
+<!-- 고객센터 메인 페이지 FAQ list 출력 -->
+<select id="boardMainFList" parameterType="bv" resultType="bv">
+select * from (select Btitle, Bdate, Bidx from TP_BOARD 
+WHERE Bcategory in (3,4,5,6) and DEL_YN = 'N' order by Bdate DESC)
+<![CDATA[ where rownum <= 5]]>
+</select>
+
+<!-- 공지사항 list 출력 -->
+<select id="noticeList" parameterType="bv" resultType="bv">
+select bidx, Btitle, Bdate, Bhit from TP_BOARD WHERE Bcategory = 2  and DEL_YN = 'N' order by Bdate DESC
+</select>
+
+
+<!-- FAQ 3 list 출력 -->
+<select id="faq3List" parameterType="bv" resultType="bv">
+select bidx, Btitle, Bdate, Bhit from TP_BOARD WHERE Bcategory = 3  and DEL_YN = 'N' order by Bdate DESC
+</select>
+
+
+<!-- FAQ 4 list 출력 -->
+<select id="faq4List" parameterType="bv" resultType="bv">
+select bidx, Btitle, Bdate, Bhit from TP_BOARD WHERE Bcategory = 4  and DEL_YN = 'N' order by Bdate DESC
+</select>
+
+<!-- FAQ 5 list 출력 -->
+<select id="faq5List" parameterType="bv" resultType="bv">
+select bidx, Btitle, Bdate, Bhit from TP_BOARD WHERE Bcategory = 5  and DEL_YN = 'N' order by Bdate DESC
+</select>
+
+<!-- FAQ 6 list 출력 -->
+<select id="faq6List" parameterType="bv" resultType="bv">
+select bidx, Btitle, Bdate, Bhit from TP_BOARD WHERE Bcategory = 6  and DEL_YN = 'N' order by Bdate DESC
+</select>
+
+<!-- 공지사항 상세보기 integer가 안되면 bv로-->
+<select id="boardCon" parameterType="integer" resultType="bv">
+select Btitle, Bdate, Bhit, Bcontent from TP_BOARD
+ WHERE Bidx = #{Bidx}
+</select>
+
+<!-- 게시글 상세보기 integer가 안되면 bv로-->
+<!-- <select id="boardContent" parameterType="integer" resultType="bv">
+select Btitle, Bdate, Bhit, Bcontent from TP_BOARD
+ WHERE Bcategory = #{bcategory} and Bidx = #{Bidx}
+</select>
+ -->
+<!-- 1:1문의글 쓸 때 가져오는 mid, memail -->
+<select id="comeQna" parameterType="integer" resultType="mbo">
+SELECT Mid, Memail from TP_MEMBER  where Midx= #{midx}
+</select>
+
+<!-- 1:1 문의 글쓰는 부분 -->
+<insert id="insertQna" parameterType="bv" >
+INSERT INTO TP_BOARD (Bidx, Midx, Bcategory, Btitle, Bcontent, Bdate, Bip)
+VALUES(seq_tbidx.nextval, #{midx}, 7, #{btitle}, #{bcontent}, #{bdate}, #{bip})
+</insert>
+
+<!-- 1:1 문의 수정 할때 불러오는 값 -->
+<select id="selectQna" parameterType="integer" resultType="mbo">
+SELECT M.Mid, M.Memail, B.Btitle, B.Bcontent, B.Bidx  from TP_MEMBER M, TP_BOARD B
+ where M.Midx = B.Midx and M.Midx= #{0} and B.Bidx = #{1}
+</select>
+
+<!-- 내가 문의한 글 수정 (관리자가 댓달아주면 수정 불가능) -->
+<update id="updateQna" parameterType="bv" >
+UPDATE TP_BOARD SET Btitle = #{btitle} , Bcontent = #{bcontent} , 
+Bredate = sysdate , Bip = #{bip} where Bidx = #{bidx}   
+</update>
+
+<!-- 내가 문의한 글 list -->
+<select id="qnaMyList" parameterType="integer" resultType="bv">
+select row_number() over(order by Bidx desc) as Listnum, bidx, Btitle, Bdate, Bwaiting_YN from TP_BOARD
+ where Bcategory = 7 and Midx = #{midx} order by Bdate DESC 
+</select>
+
+<!-- 문의글 상세보기 -->
+<select id="qnaCon" parameterType="bv" resultType="bv">
+SELECT Bidx, Btitle, Bdate, Bwaiting_YN, Bcontent, Brecontent FROM TP_BOARD 
+where Midx = #{midx} AND Bidx= #{bidx}
+</select>
+
+<!-- 조회수 count -->
+<update id="countHit" parameterType="integer" >
+UPDATE TP_BOARD SET Bhit = #{bhit} + 1 WHERE Bidx = #{bidx}     
+</update>
+
+</mapper>

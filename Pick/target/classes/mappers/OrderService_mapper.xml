@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.soripick.persistence.OrderService_Mapper">
+
+<insert id ="orderInsert" parameterType="ov">
+insert into tp_order values(seq_toidx.nextval,#{midx},#{cidx},#{oid},default,null,null,null,null,default)
+</insert>
+<!--null#{Omethod},null#{Oname},null#{Orderday},null#{Oip},default(Ocancel)  -->
+
+<select id="orderList" parameterType="ov" resultType="mo">
+select distinct o.oidx,o.oid ,c.cname , c.cqua ,o.opayment,m.midx from tp_member m ,tp_order o,tp_content c where m.midx = o.midx 
+            and o.cidx= c.cidx and o.midx=#{midx} and o.oid =#{oid}
+</select>
+
+<update id="orderUpdate" parameterType="ov">
+update tp_order set omethod=#{omethod}, oname=#{oname}, orderday=sysdate, oip=#{oip} where midx=#{midx} and oid=#{oid}
+</update>
+
+<delete id="orderContentDelete" parameterType="Integer">
+delete from tp_order where oidx=#{oidx}
+</delete>
+
+<delete id="orderCancel" parameterType="mo">
+delete from tp_order where oid=#{oid} and midx=#{midx}
+</delete>
+
+<select id="orderFinish" parameterType="String"  resultType="mo">
+select distinct m.midx , p.ppayment  ,o.omethod , o.oname  from tp_member m, tp_order o, tp_pay p where m.midx = o.midx and o.oid=p.oid and p.oid=#{oid}  
+</select>
+
+</mapper>

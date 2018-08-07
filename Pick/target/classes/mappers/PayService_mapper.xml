@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.soripick.persistence.PayService_Mapper">
+
+<select id="payCheck" resultType="Integer" >
+select count(*) from tp_member m, tp_order o, tp_pay p, tp_content c where m.midx = o.midx and o.cidx= c.cidx and o.oid=p.oid and  m.midx =#{0} and p.pstatus ='F' and c.cidx =#{1}
+</select>
+
+<insert id="payInsert" parameterType="pv">
+insert into tp_pay values(seq_tpidx.nextval,#{midx},#{oid},#{ppayment},default,default,null)
+</insert>
+
+<delete id="payDelete" parameterType="pv">
+delete from tp_pay where oid=#{oid} and midx=#{midx}
+</delete>
+<!--*default(method),default(Pstatus),null#{Pregistday} -->
+
+
+</mapper>

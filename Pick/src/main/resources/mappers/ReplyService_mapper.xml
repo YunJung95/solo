@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.soripick.persistence.ReplyService_Mapper">
+
+<insert id="replyInsert" parameterType="rv" >
+insert into tp_reply values
+(seq_tridx.nextval,#{midx},#{cidx},#{rwriter},#{rcontent},sysdate,null,'N',#{rip})
+</insert>
+
+<select id="replyList" parameterType="Integer" resultType="rv">
+select * from(select ROW_NUMBER() OVER (order by cidx desc)rn,C.* from 
+tp_reply C where cidx=#{cidx} and del_yn='N')A where A.rn <![CDATA[<=10]]>
+</select>
+
+<update id="replyDelete" parameterType="rv">
+update tp_reply set rip=#{rip}, del_yn='Y', Rdeleteday=sysdate 
+where ridx=#{ridx} and midx=#{midx}
+</update>
+</mapper>

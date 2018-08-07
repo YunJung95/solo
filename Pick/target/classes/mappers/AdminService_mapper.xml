@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.soripick.persistence.AdminService_Mapper">
+<!-- 회원부분 -->
+<select id="memberList" resultType="mv">
+select * from TP_MEMBER
+</select>
+
+<insert id="adminJoin" parameterType="mv">
+insert into TP_MEMBER (Midx,Mid,Mpwd,Mname,Mphone,Memail,Mbirth,Mjoin,Mgrade_gm,Mip)
+values(seq_tmidx.nextval,#{mid},#{mpwd},#{mname},#{mphone},#{memail},#{mbirth},#{mjoin},'M',#{mip})
+</insert>
+
+<update id="adminChange" parameterType="mv">
+UPDATE TP_MEMBER SET 
+Mpwd = #{mpwd}, Mphone = #{mphone} , Memail = #{memail}, Mrejoin = #{mrejoin}, Mgrade_gm = #{mgrade_gm}, Mip = #{mip} WHERE Midx = #{midx}
+</update>
+
+<select id="countMember" parameterType="String">
+SELECT count(*) from TP_MEMBER where Mjoin = TO_CHAR(SYSDATE, 'YYMMDD')
+</select>
+
+<!-- 게시판 관리 부분 -->
+<select id="boardList" parameterType="integer" >
+select row_number() over(order by Bidx desc) as Listnum, Bcategory, Btitle, Bdate from TP_BOARD
+ WHERE Bcategory = #{bcategory} and DEL_YN = 'N' order by Bdate DESC 
+</select>
+
+<select id="qnaWaiting" parameterType="String" resultType="bv">
+select row_number() over(order by Bidx desc) as Listnum, Bidx, Bcategory, Btitle, Bdate, Bwaiting_YN 
+from TP_BOARD where Bwaiting_YN = 'N'
+</select>
+
+<select id="qnaWriteCome" parameterType="integer" resultType="bv" >
+SELECT Btitle, Bdate, Bwaiting_YN, Bcontent FROM TP_BOARD where Bidx = #{bidx}
+</select>
+
+<update id="qnaWrite" parameterType="bv">
+Update TP_BOARD SET Brecontent = #{brecontent} , Bwaiting_YN = 'Y' , Brewdate = #{brewdate} where Bidx = #{bidx}
+</update>
+
+<select id="qnaModifyCome" parameterType="integer" resultType="bv">
+SELECT Btitle, Bdate, Bwaiting_YN, Bcontent, Brecontent FROM TP_BOARD where Bidx = #{bidx}
+</select>
+
+<update id="qnaModify" parameterType="bv">
+Update TP_BOARD SET Brecontent = #{brecontent} , Bwaiting_YN = 'Y' , Brewdate = #{brewdate} where Bidx = #{bidx}
+</update>
+
+<insert id="noticeWrite" parameterType="bv">
+INSERT INTO TP_BOARD(Bidx, Bcategory, Btitle, Bcontent, Bdate, Bip )
+VALUES(seq_tbidx.nextval,2,#{btitle},#{bcontent},#{bdate},#{bip})
+</insert>
+
+<update id="noticeModify" parameterType="bv">
+update TP_BOARD set Btitle = #{btitle}, Bcontent = #{bcontent}, Bdate = #{bdate}, Bip = #{bip} 
+where Bidx = #{bidx} and Bcategory = 2
+</update>
+
+<insert id="faqWrite" parameterType="bv">
+INSERT INTO TP_BOARD(Bidx, Bcategory, Btitle, Bcontent, Bdate, Bip )
+VALUES(seq_tbidx.nextval, #{bcategory} ,#{btitle}, #{bcontent}, #{bdate}, #{bip})
+</insert>
+
+<update id="boardDelete" parameterType="bv">
+update set del_yn ='Y' from TP_BOARD where bidx = #{bidx}
+</update>
+
+
+<!--관리자 음원관리  -->
+
+<select id="musicList" resultType="cv">
+select * from TP_Content where del_yn='N'
+</select>
+<insert id="musicInsert" parameterType="cv">
+insert into tp_content values(seq_tcidx.nextval,#{caidx},#{cname},#{cartist},
+#{caname},#{ccompany},sysdate,null,null,#{cnat},#{cimg},#{clyrics},'N',default,default,#{cfilename},default)
+</insert>
+
+<update id="musicModify" parameterType="cv">
+update TP_CONTENT set cname=#{cname},caidx=#{caidx},cartist=#{cartist},
+caname=#{caname},ccompany=#{ccompany},cmodifyday=sysdate,cnat=#{cnat},clyrics=#{clyrics} 
+where cidx=#{cidx}
+</update>
+
+<update id="musicDelete" parameterType="integer">
+update TP_CONTENT set del_yn='Y' where cidx=#{cidx}
+</update>
+
+<select id="musicInfo" parameterType="Integer" resultType="cv">
+select cidx,cname,cartist,clike,cimg,clyrics,creleaseday from TP_content where cidx=#{cidx}
+</select>
+
+<!--관리자 주문관리  -->
+<select id="morderList" resultType="ado">
+select distinct o.orderday, m.mid , o.oid , o.oname  , p.pmethod  ,p.ppayment , p.pstatus  from tp_member m ,tp_order o, tp_pay p,tp_content c where m.midx = o.midx 
+		   and o.cidx= c.cidx and o.oid=p.oid order by o.orderday desc
+</select>
+
+<update id="mpayUpdate" parameterType="String">
+update tp_pay set pstatus ='F',pregistday=sysdate where oid=#{oid}
+</update>
+
+<select id="mpayStatus" resultType="ado">
+select distinct o.orderday , m.mid , o.oid , o.oname , p.pmethod ,p.ppayment  , p.pstatus  from tp_member m ,tp_order o, tp_pay p,tp_content c 
+where m.midx = o.midx and o.cidx= c.cidx and o.oid=p.oid and p.pstatus='I' 
+order by o.orderday desc
+</select>
+<!-- 이건 한번 더 생각 할 것  -->
+
+</mapper>

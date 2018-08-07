@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.soripick.persistence.ContentService_Mapper">
+
+<select id="totalSearch" resultType="cv">
+select Cname,Cartist,Caname,Ccompany,Clike,cimg,Clyrics from tp_content 
+where cname like'%'||upper(#{keyword})||'%' or Cartist like'%'||upper(#{keyword})||'%' or Caname like'%'||upper(#{keyword})||'%'or 
+Ccompany like '%'||upper(#{keyword})||'%'
+</select>
+
+<select id="mainBestChart"  resultType="cv">
+<![CDATA[
+select row_number() over(order by clscnt desc) as Rk ,cidx,cname,cartist,clscnt,cimg 
+from tp_content where rownum<=10 and del_yn='N' 
+ ]]>
+</select>
+
+<select id="mainNewChart" resultType="cv">
+<![CDATA[
+select * from tp_content where del_yn='N' and caidx=1 and rownum<=12 
+			   order by creleaseday desc 
+]]>
+</select>
+
+<select id="mainNewChart2" resultType="cv">
+<![CDATA[
+select * from tp_content where del_yn='N' and caidx=2 and rownum<=12 
+			   order by creleaseday desc 
+]]>
+</select>
+
+<select id="mainNewChart3" resultType="cv">
+<![CDATA[
+select * from tp_content where del_yn='N' and caidx=3 and rownum<=12 
+			   order by creleaseday desc 
+]]>
+</select>
+
+<select id="bestChart" resultType="cv">
+<![CDATA[
+select row_number() over(order by clscnt desc) as Rk ,cidx,cname,cartist,clscnt from tp_content where rownum<=100 and del_yn='N'
+ ]]>
+</select> 
+
+<select id="genreChartB" parameterType="integer" resultType="cv">
+select row_number() over(order by clike desc) ,cidx, cname ,cartist ,clike from tp_content where del_yn='N' and caidx=1
+</select>
+
+<select id="genreChartD" parameterType="integer" resultType="cv">
+select row_number() over(order by clike desc) ,cidx, cname ,cartist ,clike from tp_content where del_yn='N' and caidx=2
+</select>
+
+<select id="genreChartH" parameterType="integer" resultType="cv">
+select row_number() over(order by clike desc) ,cidx, cname ,cartist ,clike from tp_content where del_yn='N' and caidx=3
+</select>
+
+<select id="genreChartO" parameterType="integer" resultType="cv">
+select row_number() over(order by clike desc) ,cidx, cname ,cartist ,clike from tp_content where del_yn='N' and caidx=4
+</select>
+
+<select id="genreChartOT" parameterType="integer" resultType="cv">
+select row_number() over(order by clike desc) ,cidx, cname ,cartist ,clike from tp_content where del_yn='N' and caidx=5
+</select>
+
+
+<select id="newChartB" parameterType="Integer" resultType="cv">
+select * from tp_content where del_yn='N' and caidx=1 order by Creleaseday desc
+</select>
+
+<select id="newChartD" parameterType="Integer" resultType="cv">
+select * from tp_content where del_yn='N' and caidx=2 order by Creleaseday desc
+</select>
+
+<select id="newChartH" parameterType="Integer" resultType="cv">
+select * from tp_content where del_yn='N' and caidx=3 order by Creleaseday desc
+</select>
+
+<select id="newChartO" parameterType="Integer" resultType="cv">
+select * from tp_content where del_yn='N' and caidx=4 order by Creleaseday desc
+</select>
+
+<select id="newChartOT" parameterType="Integer" resultType="cv">
+select * from tp_content where del_yn='N' and caidx=5 order by Creleaseday desc
+</select>
+
+<select id="musicInfo" parameterType="Integer" resultType="cv">
+select cidx,cname,cartist,clike,cimg,clyrics,creleaseday from TP_content where cidx=#{cidx}
+</select>
+
+<select id="musicPlay" parameterType="Integer" resultType="cv">
+select c.cidx,c.cname,c.CARTIST,c.CIMG,c.CFILENAME from tp_member m, tp_order o,tp_pay p, tp_content c where m.midx = o.midx 
+         and o.cidx= c.cidx and o.oid=p.oid and o.midx=#{0} and c.cidx=#{1} and p.pstatus = 'F'
+</select>
+</mapper>

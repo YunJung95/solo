@@ -1,0 +1,87 @@
+id가 이미 있는 경우에는 회원가입이 안되는데 에러페이지말고 해당 아이디가 있습니다.같은
+중복 검사해줄것
+
+
+
+
+//회원가입시 아이디 중복 검사 기능 
+이멜 형식 맞는지 검사함
+      $('#join_userid').on('change', function() {
+         var id = $(this).val();
+         var emailExp = /^[0-9a-zA-Z_\-]+@[0-9a-zA-Z_\-]+(\.[0-9a-zA-Z_\-]+){1,2}$/;
+         
+         if (emailExp.test(id)) {
+            join.isEmail = true;
+
+            if(id) {
+                $.ajax({
+                    url : '/user/id',
+                    data : {
+                       id : id
+                    },
+                    type:'POST',
+                    dataType : 'JSON',
+                    success : function(data) {
+                       if(data.success == true) {
+                          join.idCheck = true;
+                          
+                          $('#msg_join_id').text('사용 가능한 아이디에요!')
+                          $('#msg_join_id').show();
+                       } else {
+                          join.idCheck = false;
+                          $('#msg_join_id').text('이미 있는 아이디에요!')
+                          $('#msg_join_id').show();
+                          
+                       }
+                       console.log(join)
+                    },
+                    error : () => {
+                       
+                    }
+                    
+                 })
+             } else {
+                //아이디가 빈값이거나 undefined 일때
+             }
+         } else {
+            //아이디가 이메일이 아닐때
+            join.isEmail = false;
+            $('#msg_join_id').text('앗, 이메일이 아닌거 같아요!');
+            $('#msg_join_id').show();
+         }
+      })
+      
+      
+      
+      
+      
+      
+      
+      //키보드 업 됫을때 실행되는부분
+
+$('#pass_conf').on('keyup', function() {
+         var pass       = $('#pass').val();
+         var pass_conf    = $(this).val()
+         
+         if(!(pass_conf)) {
+            $('#msg_join_pass').addClass('red');
+            $('#msg_join_pass').text('어… 비밀번호가 비었나요?');
+            return false;
+         }
+         
+         if(pass == pass_conf) {
+            join.password = true;
+            $('#msg_join_pass').removeClass('red');
+            $('#msg_join_pass').text('오케이, 비밀번호가 일치해요!');
+         } else {
+            join.password = false;
+            $('#msg_join_pass').addClass('red');
+            $('#msg_join_pass').text('비밀번호가 일치하지 않아요!');
+            
+         }
+         $('#msg_join_pass').show();
+      })
+      
+      
+      
+      

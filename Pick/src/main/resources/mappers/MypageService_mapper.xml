@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tp.soripick.persistence.MypageService_Mapper">
+
+<!-- 회원정보 -->
+<select id="profile" parameterType="integer" resultType="mv">
+SELECT Mid, Mname, Mphone, Memail FROM TP_MEMBER where Midx = #{midx}
+</select>
+
+<!-- 내가 질문한 리스트 -->
+<select id="myQnaLsit" parameterType="integer" resultType="bv">
+select Btitle, Bwaiting_YN from TP_BOARD where Midx = #{midx} and Bcategory = 7
+</select>
+
+<!-- 폰번호 변경 -->
+<update id="phoneChange" parameterType="bv" >
+UPDATE TP_MEMBER SET Mphone = #{0} where Midx = #{1}
+</update>
+
+<!-- 이메일 변경 -->
+<update id="emailChange" parameterType="bv" >
+UPDATE TP_MEMBER SET Memail = #{0} where Midx = #{1}
+</update>
+
+<!-- 비번 찾기 -->
+<select id="changeFindPwd" parameterType="String" resultType="String">
+select * from TP_MEMBER where Mid = #{0} and  Mpwd = #{1}
+</select> 
+
+
+<!-- 비번 변경 -->
+<update id="pwdChange" parameterType="String" >
+UPDATE TP_MEMBER SET Mpwd = #{0} ,Mrejoin = sysdate  WHERE Mid = #{1}
+</update>
+
+
+
+<!-- 회원 탈퇴 -->
+<update id="outMember" parameterType="integer" >
+UPDATE TP_MEMBER SET Mvalue_io = 'O' WHERE Midx = #{midx}
+</update>
+
+<!--회원주문결제정보  -->
+<select id="mymusicList" parameterType="Integer"  resultType="mmi">
+select c.cidx ,c.cname, c.cartist ,c.caname ,c.cqua  ,p.pregistday from tp_member m ,tp_order o, tp_pay p,tp_content c 
+where m.midx = o.midx and o.cidx= c.cidx and o.oid=p.oid and m.midx=#{midx}
+and p.pstatus ='F' order by p.pregistday desc
+</select>
+<!--F '결제완료' | I '처리중' -->
+
+<select id="mypayList" parameterType="Integer"  resultType="mmi">
+select distinct p.oid , o.orderday  ,p.ppayment  , o.omethod  , p.pregistday  , p.pstatus  from tp_member m ,tp_order o, tp_pay p,tp_content c where m.midx = o.midx 
+          		  and o.cidx= c.cidx and o.oid=p.oid and o.ocancel='N'
+			  and m.midx=#{midx} order by o.orderday desc
+</select>
+
+<select id="myoidDetail" parameterType="mmi"  resultType="mmi">
+select  m.midx , c.cname , c.cqua , o.opayment, o.oid, p.ppayment , p.pstatus, o.omethod , o.oname  
+from tp_order o, tp_pay p, tp_content c, tp_member m  where m.midx = o.midx 
+           and o.cidx= c.cidx and o.oid=p.oid and o.midx=#{midx} and o.oid=#{oid}
+</select>
+
+<update id="myorderCancel" parameterType="mmi">
+update tp_order set OCANCEL='Y' where midx =#{midx} and oid = #{oid}  
+</update>
+
+</mapper>
