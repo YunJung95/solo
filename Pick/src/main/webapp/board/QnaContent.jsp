@@ -104,7 +104,7 @@ BoardVo mbo = (BoardVo)request.getAttribute("mbo");
 <tr>
 <td>관리자의 답변</td>
 <td colspan="3">
-<textarea name="brecontent" id="recontent" rows=20 cols=100  value="<%=mbo.getBrecontent() %>" disabled="disabled" ></textarea>
+<textarea name="brecontent" id="recontent" rows=10  disabled="disabled" ><%=mbo.getBrecontent() %></textarea>
 </td>
 </tr>
 <% } %>
